@@ -11,7 +11,7 @@ CONTENTS OF THIS FILE
 INTRODUCTION
 ------------
 
-This is a take-home assignment completed using Go and Postgres. Docs can be viewed by opening docs.html
+This is a take-home assignment completed using Go and Postgres. Docs can be viewed by opening docs.html (the server *must* be running to view the docs)
 
 PREREQUISITES & SETUP
 ---------------------
