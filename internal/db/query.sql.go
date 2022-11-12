@@ -8,6 +8,8 @@ package futuredb
 import (
 	"context"
 	"time"
+
+	"github.com/google/uuid"
 )
 
 const listAvailableAppointments = `-- name: ListAvailableAppointments :many
@@ -15,7 +17,7 @@ SELECT starts_at FROM list_available_appointments($1, $2, $3)
 `
 
 type ListAvailableAppointmentsParams struct {
-	TrainerID int32     `json:"trainer_id"`
+	TrainerID uuid.UUID `json:"trainer_id"`
 	StartsAt  time.Time `json:"starts_at"`
 	EndsAt    time.Time `json:"ends_at"`
 }
@@ -47,7 +49,7 @@ const listTrainerScheduledAppointments = `-- name: ListTrainerScheduledAppointme
 SELECT id, user_id, starts_at, ends_at, trainer_id FROM appointments WHERE trainer_id = $1
 `
 
-func (q *Queries) ListTrainerScheduledAppointments(ctx context.Context, trainerID int32) ([]Appointment, error) {
+func (q *Queries) ListTrainerScheduledAppointments(ctx context.Context, trainerID uuid.UUID) ([]Appointment, error) {
 	rows, err := q.db.QueryContext(ctx, listTrainerScheduledAppointments, trainerID)
 	if err != nil {
 		return nil, err
@@ -81,8 +83,8 @@ INSERT INTO appointments(trainer_id, user_id, starts_at, ends_at) VALUES ($1, $2
 `
 
 type PostNewAppointmentParams struct {
-	TrainerID int32     `json:"trainer_id"`
-	UserID    int32     `json:"user_id"`
+	TrainerID uuid.UUID `json:"trainer_id"`
+	UserID    uuid.UUID `json:"user_id"`
 	StartsAt  time.Time `json:"starts_at"`
 	EndsAt    time.Time `json:"ends_at"`
 }

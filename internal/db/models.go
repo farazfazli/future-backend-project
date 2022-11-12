@@ -6,16 +6,30 @@ package futuredb
 
 import (
 	"time"
+
+	"github.com/google/uuid"
 )
 
 type Appointment struct {
 	ID        int32     `json:"id"`
-	UserID    int32     `json:"user_id"`
+	UserID    uuid.UUID `json:"user_id"`
 	StartsAt  time.Time `json:"starts_at"`
 	EndsAt    time.Time `json:"ends_at"`
-	TrainerID int32     `json:"trainer_id"`
+	TrainerID uuid.UUID `json:"trainer_id"`
 }
 
 type AppointmentSlot struct {
 	StartsAt time.Time `json:"starts_at"`
+}
+
+type Member struct {
+	ID        uuid.UUID `json:"id"`
+	FirstName string    `json:"first_name"`
+	LastName  string    `json:"last_name"`
+}
+
+type Trainer struct {
+	ID        uuid.UUID `json:"id"`
+	FirstName string    `json:"first_name"`
+	LastName  string    `json:"last_name"`
 }

@@ -5,16 +5,19 @@ import (
 	"encoding/json"
 	"log"
 	"net/http"
-	"strconv"
 	"time"
 
 	futuredb "github.com/farazfazli/future-backend-project/internal/db"
 	"github.com/go-chi/chi/middleware"
 	"github.com/go-chi/chi/v5"
+	"github.com/go-chi/cors"
+	"github.com/google/uuid"
 )
 
 func NewMux() *chi.Mux {
 	r := chi.NewRouter()
+	// Since this is a take-home development project, we are allowing wildcard CORS access
+	r.Use(cors.Handler(cors.Options{}))
 	r.Use(middleware.SetHeader("Content-Type", "application/json"))
 	r.Use(middleware.NoCache)
 	r.Use(middleware.RequestID)
@@ -40,9 +43,9 @@ func AvailableAppointments(w http.ResponseWriter, r *http.Request) {
 	trainerIdParam := r.URL.Query().Get("trainer_id")
 	startsAtParam := r.URL.Query().Get("starts_at")
 	endsAtParam := r.URL.Query().Get("ends_at")
-	trainerId, err := strconv.ParseInt(trainerIdParam, 10, 32)
+	trainerId, err := uuid.Parse(trainerIdParam)
 	if err != nil {
-		log.Println("Trainer ID is not a valid number")
+		log.Println("Trainer ID is not a valid UUID")
 		w.WriteHeader(http.StatusBadRequest)
 		return
 	}
@@ -60,7 +63,7 @@ func AvailableAppointments(w http.ResponseWriter, r *http.Request) {
 	}
 
 	availableAppointmentsParams := futuredb.ListAvailableAppointmentsParams {
-		TrainerID: int32(trainerId),
+		TrainerID: trainerId,
 		StartsAt: startsAt,
 		EndsAt: endsAt,
 	}
@@ -90,7 +93,7 @@ func AddAppointment(w http.ResponseWriter, r *http.Request) {
 		w.WriteHeader(http.StatusBadRequest)
 		return
 	}
-	if addAppointmentParams.UserID == 0 || addAppointmentParams.TrainerID == 0 || 
+	if addAppointmentParams.UserID == uuid.Nil || addAppointmentParams.TrainerID == uuid.Nil || 
 	   addAppointmentParams.StartsAt.IsZero() || addAppointmentParams.EndsAt.IsZero() {
 		log.Println("Invalid appointment data")
 		w.WriteHeader(http.StatusUnprocessableEntity)
@@ -110,7 +113,7 @@ func AddAppointment(w http.ResponseWriter, r *http.Request) {
 
 	diff := addAppointmentParams.EndsAt.Sub(addAppointmentParams.StartsAt)
 	if diff.Minutes() != 30 {
-		log.Println("Must be 30 minutes long")
+		log.Println("Appointments must be 30 minutes long")
 		w.WriteHeader(http.StatusUnprocessableEntity)
 		return
 	}
@@ -129,7 +132,7 @@ func AddAppointment(w http.ResponseWriter, r *http.Request) {
 	}
 	if !found {
 		log.Println("Appointment slot doesn't exist")
-		w.WriteHeader(http.StatusUnprocessableEntity)
+		w.WriteHeader(http.StatusConflict)
 		return
 	}
 	
@@ -156,13 +159,13 @@ func AddAppointment(w http.ResponseWriter, r *http.Request) {
 
 func ScheduledAppointments(w http.ResponseWriter, r *http.Request) {
 	trainerIdParam := r.URL.Query().Get("trainer_id")
-	trainerId, err := strconv.ParseInt(trainerIdParam, 10, 32)
+	trainerId, err := uuid.Parse(trainerIdParam)
 	if err != nil {
-		log.Println("Trainer ID is not a valid number")
+		log.Println("Trainer ID is not a valid UUID")
 		w.WriteHeader(http.StatusBadRequest)
 		return
 	}
-	res, err := futuredb.DBQueries.ListTrainerScheduledAppointments(context.Background(), int32(trainerId))
+	res, err := futuredb.DBQueries.ListTrainerScheduledAppointments(context.Background(), trainerId)
 	if err != nil {
 		log.Println(err)
 		w.WriteHeader(http.StatusUnprocessableEntity)
