@@ -189,6 +189,8 @@ func ScheduledAppointments(w http.ResponseWriter, r *http.Request) {
 	}
 }
 
+// Ref: https://github.com/go-chi/chi/blob/master/_examples/fileserver/main.go
+// Used to locally serve the openapi YAML and JSON files
 func ApiSpec(r chi.Router, path string, root http.FileSystem) {
 	if strings.ContainsAny(path, "{}*") {
 		log.Println("FileServer does not permit any URL parameters.")
@@ -205,7 +207,6 @@ func ApiSpec(r chi.Router, path string, root http.FileSystem) {
 		rctx := chi.RouteContext(r.Context())
 		pathPrefix := strings.TrimSuffix(rctx.RoutePattern(), "/*")
 		fs := http.StripPrefix(pathPrefix, http.FileServer(root))
-		log.Println(fs)
 		fs.ServeHTTP(w, r)
 	})
 }
