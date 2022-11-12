@@ -5,6 +5,9 @@ import (
 	"encoding/json"
 	"log"
 	"net/http"
+	"os"
+	"path/filepath"
+	"strings"
 	"time"
 
 	futuredb "github.com/farazfazli/future-backend-project/internal/db"
@@ -36,6 +39,9 @@ func NewMux() *chi.Mux {
 	r.Get("/available-appointments", AvailableAppointments)
 	r.Post("/appointments", AddAppointment)
 	r.Get("/scheduled-appointments", ScheduledAppointments)
+	workDir, _ := os.Getwd()
+	filesDir := http.Dir(filepath.Join(workDir, "api-spec"))
+	ApiSpec(r, "/api-spec", filesDir)
 	return r
 }
 
@@ -181,4 +187,25 @@ func ScheduledAppointments(w http.ResponseWriter, r *http.Request) {
 	if err != nil {
 		log.Println(err)
 	}
+}
+
+func ApiSpec(r chi.Router, path string, root http.FileSystem) {
+	if strings.ContainsAny(path, "{}*") {
+		log.Println("FileServer does not permit any URL parameters.")
+		return
+	}
+
+	if path != "/" && path[len(path)-1] != '/' {
+		r.Get(path, http.RedirectHandler(path+"/", http.StatusMovedPermanently).ServeHTTP)
+		path += "/"
+	}
+	path += "*"
+
+	r.Get(path, func(w http.ResponseWriter, r *http.Request) {
+		rctx := chi.RouteContext(r.Context())
+		pathPrefix := strings.TrimSuffix(rctx.RoutePattern(), "/*")
+		fs := http.StripPrefix(pathPrefix, http.FileServer(root))
+		log.Println(fs)
+		fs.ServeHTTP(w, r)
+	})
 }

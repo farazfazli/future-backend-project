@@ -33,7 +33,7 @@ After this process is completed, you can run the API using ./cmd/api/api
 IMPORTANT INFORMATION
 ---------------------
 
-1. The OpenAPI specification is available in api-spec/api-spec.yml (JSON file is also available which contains the same data) and can be opened in any compatible REST client (e.g. Insomnia).
+1. The OpenAPI specification is available in api-spec/openapi.yml (JSON file is also available which contains the same data) and can be opened in any compatible REST client (e.g. Insomnia).
 2. Stoplight Elements is used to view docs from the OpenAPI definition, it includes a "Try it" button for endpoints as well as example code.
 2. The database defaults to Los Angeles time (to match with the project specification). This is done in schema.sql before creating the schema, and can be changed as needed.
 3. All dependencies are vendored. This is done to ease running a replicable build in a fresh environment without needing much time.
