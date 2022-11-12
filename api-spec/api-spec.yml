@@ -1,0 +1,120 @@
+openapi: 3.0.3
+info:
+  title: Future API
+  description: Endpoints for appointment scheduling.
+  contact:
+    name: Faraz Fazli
+    email: farazfazli@gmail.com
+  version: "0.1"
+
+servers:
+  - url: http://localhost:3000
+    description: Localhost Development Backend
+
+paths:
+  "/available-appointments":
+    get:
+      summary: Get available appointments
+      description: Get all available appointments for a trainer between two dates.
+      parameters:
+        - in: query
+          name: trainer_id
+          schema:
+            type: integer
+          description: ID of the trainer
+        - in: query
+          name: starts_at
+          schema:
+            type: string
+            format: date-time
+          description: Starting date and time
+        - in: query
+          name: ends_at
+          schema:
+            type: string
+            format: date-time
+          description: Ending date and time
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: array
+                properties:
+                  time:
+                    type: string
+                    format: date-time
+                    description: Available appointment time
+  "/appointments":
+    post:
+      summary: Post a new appointment
+      description: Add a new appointment for a user.
+      requestBody:
+        description: Appointment details
+        required: true
+        content:
+          application/json:
+            schema:
+              properties:
+                trainer_id:
+                  type: integer
+                  description: ID of the trainer
+                user_id:
+                  type: integer
+                  description: ID of the user
+                starts_at:
+                  type: string
+                  format: date-time
+                  description: Starting date and time
+                ends_at:
+                  type: string
+                  format: date-time
+                  description: Ending date and time
+      responses:
+        "200":
+          description: OK
+        "400":
+          description: Error adding appointment
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  reason:
+                    type: string
+                    description: Reason why the appointment could not be added
+  "/scheduled-appointments":
+    get:
+      summary: Get scheduled appointments
+      description: Get a list of scheduled appointments for a trainer.
+      parameters:
+        - in: query
+          name: trainer_id
+          schema:
+            type: integer
+          description: ID of the trainer
+        - in: query
+          name: starts_at
+          schema:
+            type: string
+            format: date-time
+          description: Starting date and time
+        - in: query
+          name: ends_at
+          schema:
+            type: string
+            format: date-time
+          description: Ending date and time
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: array
+                properties:
+                  time:
+                    type: string
+                    format: date-time
+                    description: Scheduled appointment times

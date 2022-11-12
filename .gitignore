@@ -1,0 +1,9 @@
+cmd/api/api
+cmd/cli/cli
+.env
+.vscode/*
+!.vscode/settings.json
+!.vscode/tasks.json
+!.vscode/launch.json
+!.vscode/extensions.json
+*.code-workspace
