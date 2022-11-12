@@ -38,7 +38,7 @@ paths:
             type: string
             format: date-time
           description: Starting date and time
-          example: "2022-11-15T10:00:00-08:00"
+          example: "2022-11-15T08:00:00-08:00"
         - in: query
           name: ends_at
           required: true
@@ -142,7 +142,7 @@ paths:
             type: string
             format: date-time
           description: Starting date and time
-          example: "2022-11-15T10:00:00-08:00"
+          example: "2022-11-15T08:00:00-08:00"
         - in: query
           name: ends_at
           required: true

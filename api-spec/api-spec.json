@@ -26,7 +26,9 @@
       "get": {
         "summary": "Get available appointments",
         "description": "Get all available appointments for a trainer between two dates.",
-        "tags": ["Appointment Routes"],
+        "tags": [
+          "Appointment Routes"
+        ],
         "parameters": [
           {
             "in": "query",
@@ -48,7 +50,7 @@
               "format": "date-time"
             },
             "description": "Starting date and time",
-            "example": "2022-11-15T10:00:00-08:00"
+            "example": "2022-11-15T08:00:00-08:00"
           },
           {
             "in": "query",
@@ -91,7 +93,9 @@
       "post": {
         "summary": "Post a new appointment",
         "description": "Add a new appointment for a user.",
-        "tags": ["Appointment Routes"],
+        "tags": [
+          "Appointment Routes"
+        ],
         "requestBody": {
           "description": "Appointment details",
           "required": true,
@@ -120,7 +124,12 @@
                     "description": "Ending date and time"
                   }
                 },
-                "required": ["trainer_id", "user_id", "starts_at", "ends_at"],
+                "required": [
+                  "trainer_id",
+                  "user_id",
+                  "starts_at",
+                  "ends_at"
+                ],
                 "example": {
                   "trainer_id": "1391b756-cf01-4fd4-b0ae-eae8cfe2f46f",
                   "user_id": "2d793328-0c42-4f10-8475-a0c10ae3fdb7",
@@ -165,7 +174,9 @@
       "get": {
         "summary": "Get scheduled appointments",
         "description": "Get a list of scheduled appointments for a trainer.",
-        "tags": ["Appointment Routes"],
+        "tags": [
+          "Appointment Routes"
+        ],
         "parameters": [
           {
             "in": "query",
@@ -187,7 +198,7 @@
               "format": "date-time"
             },
             "description": "Starting date and time",
-            "example": "2022-11-15T10:00:00-08:00"
+            "example": "2022-11-15T08:00:00-08:00"
           },
           {
             "in": "query",

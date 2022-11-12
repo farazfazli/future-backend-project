@@ -16,9 +16,11 @@ CREATE TABLE trainer (
 CREATE TABLE appointments (
     id SERIAL NOT NULL,
     user_id UUID REFERENCES member(id) NOT NULL,
-    starts_at TIMESTAMPTZ NOT NULL,
-    ends_at TIMESTAMPTZ NOT NULL,
-    trainer_id UUID REFERENCES trainer(id) NOT NULL
+    starts_at TIMESTAMPTZ NOT NULL CONSTRAINT opening CHECK (starts_at::TIME >= '08:00:00'),
+    ends_at TIMESTAMPTZ NOT NULL CONSTRAINT closing CHECK (ends_at::TIME < '17:00:00'),
+    trainer_id UUID REFERENCES trainer(id) NOT NULL,
+    CONSTRAINT duration CHECK (AGE(ends_at, starts_at) = interval '30 minutes'),
+    CONSTRAINT weekday CHECK (EXTRACT(ISODOW FROM starts_at) NOT IN (6, 7))
 );
 
 CREATE VIEW appointment_slot AS
@@ -29,6 +31,9 @@ DECLARE
     SATURDAY INTEGER := 6;
     SUNDAY INTEGER := 7;
 BEGIN
+    IF NOT EXISTS(SELECT FROM trainer WHERE id = _trainer_id) THEN
+        RAISE EXCEPTION 'Trainer UUID does not exist.';
+    END IF;
     RETURN QUERY SELECT starts_at FROM generate_series(_starts_at, _ends_at - interval '1 minute', INTERVAL '30 minutes') starts_at WHERE 
     starts_at::TIME >= '08:00:00' AND starts_at::TIME < '17:00:00' AND EXTRACT(ISODOW FROM starts_at) NOT IN (SATURDAY, SUNDAY)
     EXCEPT SELECT starts_at FROM appointments WHERE trainer_id = _trainer_id ORDER BY starts_at ASC;
